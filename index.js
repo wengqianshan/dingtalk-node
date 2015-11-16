@@ -6,15 +6,13 @@ var apis = require('./apis');
 var token;
 var tokenCreateTime;
 var tokenExpireTime = 7200 * 1000;
-
+/**
+ * 日志封装，方便后期日志多样化处理
+ **/
 function log() {
     args = Array.prototype.slice.call(arguments);
     console.log(args)
 }
-
-
-
-
 
 
 function App(config) {
@@ -33,7 +31,7 @@ function App(config) {
  * @returns {null} 
  **/
  App.prototype.getToken = function(callback) {
-    log('获取token')
+    //log('获取token')
     var cid = this.config.cid;
     var secret = this.config.secret;
     request({
@@ -46,14 +44,14 @@ function App(config) {
         }
     }, function(err, response, body) {
         if (err) {
-            log('出错了', err);
+            //log('出错了', err);
             return callback(err);
         }
-        log('返回数据', body);
+        //log('返回数据', body);
         var json = body;
         var errcode = json.errcode;
         if (errcode !== 0) {
-            log(json);
+            //log(json);
         }
         token = json.access_token;
         tokenCreateTime = Date.now();
@@ -92,17 +90,17 @@ function App(config) {
         } else {
             obj.qs = params;
         }
-        log('请求参数：', obj)
+        //log('请求参数：', obj)
         request(obj, function(err, response, body) {
             if (err) {
-                log('出错了', err);
+                //log('出错了', err);
                 return callback(err);
             }
-            log('返回数据', body);
+            //log('返回数据', body);
             var json = body;
             var errcode = json.errcode;
             if (errcode !== 0) {
-                log(json);
+                //log(json);
             }
             callback(err, json);
         })
@@ -111,7 +109,7 @@ function App(config) {
     if ((token && tokenCreateTime && (Date.now() - tokenCreateTime < tokenExpireTime))) {
         action(token);
     } else {
-        log('token过期或者未设置')
+        //log('token过期或者未设置')
         this.getToken(function(err, json) {
             if (err) {
                 return callback(err);
@@ -141,7 +139,7 @@ apis.forEach(function(item) {
         }
         this.doRequest(p, params, function(err, json) {
             if (err) {
-                log('获取数据失败');
+                //log('获取数据失败');
             }
             callback(err, json);
         });
