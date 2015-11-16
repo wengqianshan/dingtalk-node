@@ -1,0 +1,28 @@
+{
+  "name": "dingtalk-node",
+  "version": "1.0.0",
+  "description": "dingtalk sdk for nodejs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xiaoshan5733/dingtalk-node.git"
+  },
+  "keywords": [
+    "dingtalk",
+    "dingding"
+  ],
+  "author": "xiaoshan5733",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/xiaoshan5733/dingtalk-node/issues"
+  },
+  "homepage": "https://github.com/xiaoshan5733/dingtalk-node#readme",
+  "dependencies": {
+    "lodash": "^3.10.1",
+    "qs": "^6.0.0",
+    "request": "^2.65.0"
+  }
+}
