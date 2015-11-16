@@ -1,7 +1,6 @@
 var request = require('request');
 var qs = require('qs');
 var _ = require('lodash');
-var config = require('./config');
 var apis = require('./apis');
 
 var token;
@@ -10,9 +9,22 @@ var tokenExpireTime = 7200 * 1000;
 
 function log() {
     args = Array.prototype.slice.call(arguments);
-    if (config.debug) {
-        console.log(args)
-    }
+    console.log(args)
+}
+
+
+
+
+
+
+function App(config) {
+    var defaults = {
+        domain: 'dingtalk api domain',
+        cid: 'CorpID',
+        secret: 'CorpSecret',
+        redirect_uri: 'REDIRECT_URI'
+    };
+    this.config = _.merge(defaults, config);
 }
 
 /**
@@ -20,13 +32,13 @@ function log() {
  * @param {function} callback 回调
  * @returns {null} 
  **/
-function getToken(callback) {
+ App.prototype.getToken = function(callback) {
     log('获取token')
-    var cid = config.oa.cid;
-    var secret = config.oa.secret;
+    var cid = this.config.cid;
+    var secret = this.config.secret;
     request({
         method: 'GET',
-        url: config.oa.domain + '/gettoken',
+        url: this.config.domain + '/gettoken',
         json: true,
         qs: {
             corpid: cid,
@@ -50,7 +62,6 @@ function getToken(callback) {
     })
 }
 
-
 /**
  * 统一请求接口
  * @param {string} path 请求路径，bui自动拼接成完整的url
@@ -58,9 +69,10 @@ function getToken(callback) {
  * @param {function} callback  回调，请求成功与否都会触发回调，成功回调会回传数据
  * @returns {null} 
  **/
-function doRequest(path, params, callback) {
+ App.prototype.doRequest = function(path, params, callback) {
+    var _this = this;
     var action = function(t) {
-        var url = config.oa.domain + '/' + path;
+        var url = _this.config.domain + '/' + path;
         if (t) {
             url += '?access_token=' + t;
         }
@@ -100,7 +112,7 @@ function doRequest(path, params, callback) {
         action(token);
     } else {
         log('token过期或者未设置')
-        getToken(function(err, json) {
+        this.getToken(function(err, json) {
             if (err) {
                 return callback(err);
             }
@@ -108,7 +120,6 @@ function doRequest(path, params, callback) {
         });
     }
 }
-var objs = {};
 
 /**
  * 批量生成接口
@@ -118,7 +129,7 @@ apis.forEach(function(item) {
     var method = item.method;
     var alias = item.alias;
     var functionName = _.camelCase(alias || p);
-    objs[functionName] = function(params, callback) {
+    App.prototype[functionName] = function(params, callback) {
         if (_.isFunction(params)) {
             callback = params;
             params = {};
@@ -128,7 +139,7 @@ apis.forEach(function(item) {
         if (method === 'POST') {
             params.method = 'POST';
         }
-        doRequest(p, params, function(err, json) {
+        this.doRequest(p, params, function(err, json) {
             if (err) {
                 log('获取数据失败');
             }
@@ -137,4 +148,4 @@ apis.forEach(function(item) {
     }
 });
 
-module.exports = objs;
+module.exports = App;
