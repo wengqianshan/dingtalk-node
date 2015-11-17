@@ -17,7 +17,7 @@ function log() {
 
 function App(config) {
     var defaults = {
-        domain: 'dingtalk api domain',
+        domain: 'https://oapi.dingtalk.com',
         cid: 'CorpID',
         secret: 'CorpSecret',
         redirect_uri: 'REDIRECT_URI'
