@@ -105,6 +105,12 @@ function App(config) {
             callback(err, json);
         })
     };
+    //支持已经获取access_token的情况
+    if (params.access_token) {
+        var _token = params.access_token;
+        delete params.access_token;
+        return action(_token);
+    }
     //如果有判断三种情况：1token没过期； 2不检查token； 3token过期或者没有设置token等情况
     if ((token && tokenCreateTime && (Date.now() - tokenCreateTime < tokenExpireTime))) {
         action(token);
