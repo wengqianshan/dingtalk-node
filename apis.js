@@ -70,5 +70,8 @@ module.exports = [
     },{
         path: 'user/getuserinfo',
         method: 'GET'
+    },{
+        path: 'chat/send',
+        method: 'POST'
     }
 ];
